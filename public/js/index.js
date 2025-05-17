@@ -1,6 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
   const socket = io(); // Inicializar socket.io
 
+  // Función para actualizar el contador del carrito
+  const updateCartCounter = async () => {
+    const cartId = localStorage.getItem('cartId');
+    if (cartId) {
+      try {
+        const response = await fetch(`/api/carts/${cartId}`);
+        if (response.ok) {
+          const cartData = await response.json();
+          const totalItems = cartData.payload.products.reduce((total, item) => total + item.quantity, 0);
+          const counter = document.querySelector('.cart-counter');
+          if (counter) counter.textContent = totalItems;
+        }
+      } catch (error) {
+        console.error('Error al actualizar el contador del carrito:', error);
+      }
+    }
+  };
+
+  // Actualizar el contador al cargar la página
+  updateCartCounter();
+
   // Formulario para añadir nuevos productos
   const formNewProduct = document.getElementById("formNewProduct");
   const productList = document.getElementById("productList");
@@ -156,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (response.ok) {
           alert("Producto agregado al carrito con éxito.");
+          updateCartCounter(); // Actualizar el contador después de agregar un producto
         } else {
           const errorData = await response.json();
           console.error("Error en la respuesta del servidor:", errorData);

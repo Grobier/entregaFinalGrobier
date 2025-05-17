@@ -18,9 +18,8 @@ body {
 }
 
 .logo-container {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
 }
 
 .logo {
@@ -46,19 +45,42 @@ body {
 }
 
 .cart-btn {
-    background-color: #233554;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 8px;
+    position: fixed;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: url('/img/carrito.png') center/cover no-repeat;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    z-index: 1000;
     text-decoration: none;
-    font-weight: bold;
-    font-size: 1rem;
-    border: 1px solid #64ffda;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .cart-btn:hover {
-    background-color: rgba(100, 255, 218, 0.1);
-    color: #64ffda;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.cart-counter {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #e74c3c;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    font-weight: bold;
 }
 
 /* Cards */
@@ -123,7 +145,7 @@ body {
     border: none;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin: 5px;
+    margin: 10px 5px;
 }
 
 .btn:hover {
