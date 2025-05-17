@@ -1,0 +1,39 @@
+<div class="dashboard">
+  <h1>Dashboard</h1>
+
+  {{#with user}}
+      <h2>{{username}}</h2>
+      {{#if isAdmin}}
+          <h3>Tienes permisos de administrador</h3>
+      {{else}}
+          <h3>No tienes permisos de administrador</h3>
+      {{/if}}
+  {{/with}}
+
+  <div id="productList">
+    {{#each products}}
+    <div class="product-card" data-id="{{this._id}}">
+      <div class="product-image-container">
+        <img class="product-image" src="{{this.thumbnail}}" alt="{{this.title}}">
+      </div>
+      <h2 class="product-title">{{this.title}}</h2>
+      <h3 class="product-price">Precio: ${{this.price}}</h3>
+      <button class="add-to-cart-btn btn" data-id="{{this._id}}">Agregar al carrito</button>
+      <button class="delete-btn btn" data-id="{{this._id}}">Eliminar</button>
+    </div>
+    {{/each}}
+  </div>
+</div>
+
+<div>
+<form id="formNewProduct" action="/api/products" method="POST" enctype="multipart/form-data">
+  <input type="text" name="title" placeholder="Nombre del producto" required>
+  <input type="number" name="price" placeholder="Precio del producto" required>
+  <input type="number" name="stock" placeholder="Stock" required>
+  <input type="file" name="thumbnail" accept="image/*" required>
+  <input type="text" name="code" placeholder="Codigo" required>
+  <input type="text" name="category" placeholder="Categoría" required>
+  <input type="text" name="description" placeholder="Descripción" required>
+  <button type="submit">Agregar Producto</button>
+</form>
+</div>

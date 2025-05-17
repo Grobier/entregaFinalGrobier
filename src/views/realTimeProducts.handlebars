@@ -1,0 +1,25 @@
+<h1>Lista de Productos en tiempo real</h1>
+
+<form id="formNewProduct">
+  <input type="text" name="title" placeholder="Ingrese el título" required>
+  <input type="text" name="description" placeholder="Ingrese la descripción" required>
+  <input type="text" name="code" placeholder="Ingrese el código" required>
+  <input type="number" name="price" placeholder="Ingrese el precio" required>
+  <input type="number" name="stock" placeholder="Ingrese el stock" required>
+  <input type="text" name="category" placeholder="Ingrese la categoría" required>
+  <input type="text" name="thumbnail" placeholder="Ingrese la URL de la imagen" required> <!-- Nuevo campo -->
+  <button type="submit">Enviar</button>
+</form>
+
+<ul id="productList">
+  {{#each products}}
+    <li data-id="{{this._id}}">
+      <img src="{{this.thumbnail}}" alt="{{this.title}}" style="width: 50px; height: 50px;"> <!-- Mostrar la imagen -->
+      {{this.title}} - ${{this.price}} 
+      <button class="delete-btn" data-id="{{this._id}}">Eliminar</button>
+    </li>
+  {{/each}}
+</ul>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>

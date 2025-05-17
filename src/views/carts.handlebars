@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Carritos</title>
+  <style>
+    /* Estilo específico para la página de carritos */
+    .cart-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .cart-card {
+      background-color: #2c2c2c;
+      border: 1px solid #6c5ce7;
+      border-radius: 12px;
+      padding: 16px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0px 4px 8px rgba(108, 92, 231, 0.5);
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .cart-card:hover {
+      transform: translateY(-8px);
+    }
+
+    .cart-header {
+      font-size: 22px;
+      color: #dfe6e9;
+      margin-bottom: 10px;
+    }
+
+    .cart-products {
+      text-align: left;
+      margin-top: 10px;
+    }
+
+    .cart-products li {
+      border-bottom: 1px dashed #6c5ce7;
+      padding: 8px 0;
+      color: #e0e0e0;
+    }
+
+    .cart-products li:last-child {
+      border-bottom: none;
+    }
+
+    .empty-cart {
+      color: #888;
+      font-style: italic;
+      text-align: center;
+    }
+
+    .details-link {
+      display: inline-block;
+      margin-top: 10px;
+      background-color: #8e44ad;
+      color: white;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .details-link:hover {
+      background-color: #6c5ce7;
+    }
+
+    .delete-btn {
+      margin-top: 10px;
+      background-color: #e74c3c;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .delete-btn:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align: center;">Lista de Carritos</h1>
+  <div class="cart-container">
+    {{#if carts.length}}
+      {{#each carts}}
+        <div class="cart-card">
+          <h2 class="cart-header">Carrito ID: {{this._id}}</h2>
+          <ul class="cart-products">
+            {{#if this.products.length}}
+              {{#each this.products}}
+                <li>
+                  Producto: <strong>{{this.product.title}}</strong> <br>
+                  Cantidad: {{this.quantity}}
+                </li>
+              {{/each}}
+            {{else}}
+              <li class="empty-cart">Este carrito está vacío.</li>
+            {{/if}}
+          </ul>
+          <a href="/carts/{{this._id}}" class="details-link">Ver detalles del carrito</a>
+          <!-- Botón para eliminar el carrito -->
+          <button class="delete-btn" onclick="deleteCart('{{this._id}}')">Eliminar carrito</button>
+        </div>
+      {{/each}}
+    {{else}}
+      <p class="empty-cart">No hay carritos disponibles.</p>
+    {{/if}}
+  </div>
+
+  <script>
+    // Función para eliminar un carrito
+    async function deleteCart(cartId) {
+      try {
+        const response = await fetch(`/api/carts/${cartId}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          alert('Carrito eliminado con éxito');
+          window.location.reload(); // Recargar la página para reflejar los cambios
+        } else {
+          alert('Hubo un problema al eliminar el carrito');
+        }
+      } catch (error) {
+        console.error('Error al eliminar el carrito:', error);
+        alert('Error al eliminar el carrito');
+      }
+    }
+  </script>
+</body>
+</html>

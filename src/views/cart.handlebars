@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalles del Carrito</title>
+  <style>
+    .cart-details {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #2c2c2c;
+      border-radius: 8px;
+      color: #dfe6e9;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-title {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .cart-products {
+      list-style: none;
+      padding: 0;
+    }
+
+    .cart-products li {
+      border-bottom: 1px solid #6c5ce7;
+      padding: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cart-products li:last-child {
+      border-bottom: none;
+    }
+
+    .product-info {
+      flex-grow: 1;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      background-color: #8e44ad;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      border: none;
+    }
+
+    .btn:hover {
+      background-color: #6c5ce7;
+    }
+
+    .cart-actions {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .primary-btn {
+      background-color: #27ae60;
+    }
+
+    .primary-btn:hover {
+      background-color: #2ecc71;
+    }
+
+    .secondary-btn {
+      background-color: #e74c3c;
+    }
+
+    .secondary-btn:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <div class="cart-details">
+    <h1 class="cart-title">Carrito ID: {{cart._id}}</h1>
+    <ul class="cart-products">
+      {{#if cart.products.length}}
+        {{#each cart.products}}
+          <li>
+            <div class="product-info">
+              Producto: <strong>{{this.product.title}}</strong> <br>
+              Cantidad: <span class="quantity" data-product-id="{{this.product._id}}">{{this.quantity}}</span>
+            </div>
+            <div class="product-actions">
+              <button class="btn" onclick="updateQuantity('{{../cart._id}}', '{{this.product._id}}', 'add')">+</button>
+              <button class="btn" onclick="updateQuantity('{{../cart._id}}', '{{this.product._id}}', 'subtract')">-</button>
+              <button class="btn secondary-btn" onclick="deleteProduct('{{../cart._id}}', '{{this.product._id}}')">Eliminar</button>
+            </div>
+          </li>
+        {{/each}}
+      {{else}}
+        <li>Este carrito está vacío.</li>
+      {{/if}}
+    </ul>
+    <div class="cart-actions">
+      <button class="btn primary-btn" onclick="checkout('{{cart._id}}')">Continuar a la compra</button>
+      <a href="/carts" class="btn">Volver atrás</a>
+    </div>
+  </div>
+
+  <script>
+    // Función para actualizar la cantidad de un producto
+async function updateQuantity(cartId, productId, action) {
+  try {
+    // Seleccionar el elemento de cantidad correspondiente al producto
+    const quantityElement = document.querySelector(`[data-product-id="${productId}"]`);
+
+    // Validar si el elemento existe
+    if (!quantityElement) {
+      alert("No se pudo encontrar la cantidad del producto en el DOM.");
+      return;
+    }
+
+    const currentQuantity = parseInt(quantityElement.textContent, 10);
+
+    // Validar si la cantidad actual es menor o igual a 1 y la acción es restar
+    if (action === "subtract" && currentQuantity <= 1) {
+      alert("La cantidad mínima permitida es 1.");
+      return;
+    }
+
+    const quantityChange = action === "add" ? 1 : -1;
+
+    // Enviar la solicitud al servidor
+    const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ quantity: quantityChange }),
+    });
+
+    if (response.ok) {
+      window.location.reload(); // Recargar la página para reflejar los cambios
+    } else {
+      const error = await response.json();
+      alert(`Error: ${error.message}`);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Hubo un problema al actualizar la cantidad.");
+  }
+}
+
+    // Función para eliminar un producto del carrito
+    async function deleteProduct(cartId, productId) {
+      try {
+        const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          const error = await response.json();
+          alert(`Error: ${error.message}`);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Hubo un problema al eliminar el producto.");
+      }
+    }
+
+    // Función para realizar la compra
+    async function checkout(cartId) {
+      try {
+        const response = await fetch(`/api/carts/${cartId}/checkout`, {
+          method: 'POST'
+        });
+
+        if (response.ok) {
+          alert("¡Compra realizada con éxito!");
+          window.location.href = "/";
+        } else {
+          alert("Hubo un problema al realizar la compra.");
+        }
+      } catch (error) {
+        console.error("Error al realizar la compra:", error);
+      }
+    }
+  </script>
+</body>
+</html>

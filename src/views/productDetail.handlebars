@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle del Producto</title>
+</head>
+<body>
+  <h1>{{product.title}}</h1>
+  <img src="{{product.thumbnail}}" alt="Imagen de {{product.title}}" style="max-width: 100%; border-radius: 8px;">
+  <p><strong>Descripción:</strong> {{product.description}}</p>
+  <p><strong>Categoría:</strong> {{product.category}}</p>
+  <p><strong>Precio:</strong> ${{product.price}}</p>
+  <button id="add-to-cart-btn" data-id="{{product._id}}">Agregar al carrito</button>
+
+  <!-- Script para manejar el botón -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Registrar el evento solo una vez al cargar el DOM
+      const addToCartButton = document.getElementById("add-to-cart-btn");
+      if (addToCartButton) {
+        addToCartButton.addEventListener("click", async function() {
+          const productId = addToCartButton.getAttribute("data-id");
+          try {
+            // Obtener el carrito desde localStorage o crear uno nuevo
+            let cartId = localStorage.getItem("cartId");
+            if (!cartId) {
+              const response = await fetch("/api/carts", { method: "POST" });
+              if (!response.ok) throw new Error("No se pudo crear el carrito.");
+              const data = await response.json();
+              cartId = data.payload._id;
+              localStorage.setItem("cartId", cartId);
+            }
+
+            // Agregar el producto al carrito
+            const response = await fetch(`/api/carts/${cartId}/product/${productId}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ quantity: 1 }),
+            });
+
+            if (response.ok) {
+              alert("Producto agregado al carrito con éxito.");
+            } else {
+              const errorText = await response.text();
+              console.error("Error en la respuesta del servidor:", errorText);
+              alert("Error: No se pudo agregar el producto al carrito.");
+            }
+          } catch (error) {
+            console.error("Error al agregar el producto al carrito:", error);
+            alert("Hubo un problema al agregar el producto al carrito.");
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
