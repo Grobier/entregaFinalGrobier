@@ -1,17 +1,141 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Detalle del Producto</title>
+  <style>
+    .product-detail-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      background-color: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-image-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .product-image {
+      max-width: 400px;
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease;
+    }
+
+    .product-image:hover {
+      transform: scale(1.02);
+    }
+
+    .product-info-section {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .product-title {
+      font-size: 2.5rem;
+      color: #1a73e8;
+      margin: 0;
+      font-weight: bold;
+    }
+
+    .product-description {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #333333;
+      margin: 1rem 0;
+    }
+
+    .product-meta {
+      display: grid;
+      gap: 1rem;
+      padding: 1.5rem;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #333333;
+    }
+
+    .meta-label {
+      font-weight: bold;
+      color: #2e7d32;
+    }
+
+    #add-to-cart-btn {
+      background-color: #2e7d32;
+      color: #ffffff;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    #add-to-cart-btn:hover {
+      background-color: #1b5e20;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .product-detail-container {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+      }
+
+      .product-image {
+        max-width: 100%;
+      }
+
+      .product-title {
+        font-size: 2rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>{{product.title}}</h1>
-  <img src="{{product.thumbnail}}" alt="Imagen de {{product.title}}" style="max-width: 100%; border-radius: 8px;">
-  <p><strong>Descripción:</strong> {{product.description}}</p>
-  <p><strong>Categoría:</strong> {{product.category}}</p>
-  <p><strong>Precio:</strong> ${{product.price}}</p>
-  <button id="add-to-cart-btn" data-id="{{product._id}}">Agregar al carrito</button>
+  <div class="banner" style="background-image: url('/img/banner.png'); background-size: cover; background-position: center;">
+    <h1>Detalles del Producto</h1>
+  </div>
+  <div class="product-detail-container">
+    <div class="product-image-section">
+      <img class="product-image" src="{{product.thumbnail}}" alt="Imagen de {{product.title}}">
+    </div>
+    <div class="product-info-section">
+      <h1 class="product-title">{{product.title}}</h1>
+      <p class="product-description">{{product.description}}</p>
+      <div class="product-meta">
+        <div class="meta-item">
+          <span class="meta-label">Categoría:</span>
+          <span>{{product.category}}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Precio:</span>
+          <span>${{product.price}}</span>
+        </div>
+      </div>
+      <button id="add-to-cart-btn" data-id="{{product._id}}">Agregar al Carrito</button>
+    </div>
+  </div>
 
   <!-- Script para manejar el botón -->
   <script>
@@ -40,15 +164,33 @@
             });
 
             if (response.ok) {
-              alert("Producto agregado al carrito con éxito.");
+              Swal.fire({
+                title: '¡Éxito!',
+                text: 'Producto agregado al carrito con éxito',
+                icon: 'success',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#2e7d32'
+              });
             } else {
               const errorText = await response.text();
               console.error("Error en la respuesta del servidor:", errorText);
-              alert("Error: No se pudo agregar el producto al carrito.");
+              Swal.fire({
+                title: 'Error',
+                text: 'No se pudo agregar el producto al carrito',
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#d32f2f'
+              });
             }
           } catch (error) {
             console.error("Error al agregar el producto al carrito:", error);
-            alert("Hubo un problema al agregar el producto al carrito.");
+            Swal.fire({
+              title: 'Error',
+              text: 'Hubo un problema al agregar el producto al carrito',
+              icon: 'error',
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#d32f2f'
+            });
           }
         });
       }

@@ -1,161 +1,239 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Detalles del Carrito</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
+    :root {
+      --primary-color: #2c3e50;
+      --accent-color: #27ae60;
+      --danger-color: #e74c3c;
+      --background-color: #f8f9fa;
+      --text-color: #2c3e50;
+      --border-color: #e9ecef;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
     .cart-details {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #2c2c2c;
-      border-radius: 8px;
-      color: #dfe6e9;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     .cart-title {
+      color: var(--primary-color);
       text-align: center;
-      font-size: 24px;
-      margin-bottom: 20px;
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 1rem;
     }
 
     .cart-products {
       list-style: none;
       padding: 0;
+      margin: 0;
     }
 
     .cart-products li {
-      border-bottom: 1px solid #6c5ce7;
-      padding: 10px 0;
+      background-color: white;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .cart-products li:last-child {
-      border-bottom: none;
+    .cart-products li:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .product-info {
       flex-grow: 1;
+      padding-right: 2rem;
+    }
+
+    .product-info strong {
+      font-size: 1.1rem;
+      color: var(--primary-color);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .quantity {
+      display: inline-block;
+      background-color: var(--background-color);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-weight: 500;
     }
 
     .product-actions {
       display: flex;
-      gap: 10px;
+      gap: 0.75rem;
+      align-items: center;
     }
 
     .btn {
-      background-color: #8e44ad;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
       border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.25rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
     }
 
-    .btn:hover {
-      background-color: #6c5ce7;
+    .btn-quantity {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-quantity:hover {
+      background-color: #34495e;
+      transform: scale(1.05);
+    }
+
+    .btn-delete {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background-color: #c0392b;
+      transform: scale(1.05);
     }
 
     .cart-actions {
-      margin-top: 20px;
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid var(--border-color);
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .btn-checkout {
+      background-color: var(--accent-color);
+      color: white;
+      padding: 1rem 2rem;
+    }
+
+    .btn-checkout:hover {
+      background-color: #219a52;
+      transform: scale(1.05);
+    }
+
+    .btn-back {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      padding: 1rem 2rem;
+    }
+
+    .btn-back:hover {
+      background-color: #e9ecef;
+    }
+
+    .empty-cart-message {
       text-align: center;
-    }
-
-    .primary-btn {
-      background-color: #27ae60;
-    }
-
-    .primary-btn:hover {
-      background-color: #2ecc71;
-    }
-
-    .secondary-btn {
-      background-color: #e74c3c;
-    }
-
-    .secondary-btn:hover {
-      background-color: #c0392b;
+      padding: 2rem;
+      color: #6c757d;
+      font-style: italic;
     }
   </style>
 </head>
 <body>
+  <div class="banner" style="background-image: url('/img/banner.png'); background-size: cover; background-position: center;">
+    <h1>Carrito de Compras</h1>
+  </div>
   <div class="cart-details">
-    <h1 class="cart-title">Carrito ID: {{cart._id}}</h1>
+    
     <ul class="cart-products">
       {{#if cart.products.length}}
         {{#each cart.products}}
           <li>
             <div class="product-info">
-              Producto: <strong>{{this.product.title}}</strong> <br>
+              <strong>{{this.product.title}}</strong>
               Cantidad: <span class="quantity" data-product-id="{{this.product._id}}">{{this.quantity}}</span>
             </div>
             <div class="product-actions">
-              <button class="btn" onclick="updateQuantity('{{../cart._id}}', '{{this.product._id}}', 'add')">+</button>
-              <button class="btn" onclick="updateQuantity('{{../cart._id}}', '{{this.product._id}}', 'subtract')">-</button>
-              <button class="btn secondary-btn" onclick="deleteProduct('{{../cart._id}}', '{{this.product._id}}')">Eliminar</button>
+              <button class="btn btn-quantity" onclick="updateQuantity('{{../cart._id}}', '{{this.product._id}}', 'add')">+</button>
+              <button class="btn btn-quantity" onclick="updateQuantity('{{../cart._id}}', '{{this.product._id}}', 'subtract')">-</button>
+              <button class="btn btn-delete" onclick="deleteProduct('{{../cart._id}}', '{{this.product._id}}')">
+                <span>Eliminar</span>
+              </button>
             </div>
           </li>
         {{/each}}
       {{else}}
-        <li>Este carrito está vacío.</li>
+        <li class="empty-cart-message">Tu carrito está vacío</li>
       {{/if}}
     </ul>
     <div class="cart-actions">
-      <button class="btn primary-btn" onclick="checkout('{{cart._id}}')">Continuar a la compra</button>
-      <a href="/carts" class="btn">Volver atrás</a>
+      <button class="btn btn-checkout" onclick="checkout('{{cart._id}}')">Finalizar Compra</button>
+      <a href="/carts" class="btn btn-back">Volver</a>
     </div>
   </div>
 
   <script>
-    // Función para actualizar la cantidad de un producto
-async function updateQuantity(cartId, productId, action) {
-  try {
-    // Seleccionar el elemento de cantidad correspondiente al producto
-    const quantityElement = document.querySelector(`[data-product-id="${productId}"]`);
+    async function updateQuantity(cartId, productId, action) {
+      try {
+        const quantityElement = document.querySelector(`[data-product-id="${productId}"]`);
+        if (!quantityElement) {
+          alert("No se pudo encontrar la cantidad del producto.");
+          return;
+        }
 
-    // Validar si el elemento existe
-    if (!quantityElement) {
-      alert("No se pudo encontrar la cantidad del producto en el DOM.");
-      return;
+        const currentQuantity = parseInt(quantityElement.textContent, 10);
+        if (action === "subtract" && currentQuantity <= 1) {
+          alert("La cantidad mínima permitida es 1.");
+          return;
+        }
+
+        const quantityChange = action === "add" ? 1 : -1;
+        const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ quantity: quantityChange }),
+        });
+
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          const error = await response.json();
+          Swal.fire({
+            title: 'Error',
+            text: `Error: ${error.message}`,
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#d32f2f'
+          });
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Hubo un problema al actualizar la cantidad.");
+      }
     }
 
-    const currentQuantity = parseInt(quantityElement.textContent, 10);
-
-    // Validar si la cantidad actual es menor o igual a 1 y la acción es restar
-    if (action === "subtract" && currentQuantity <= 1) {
-      alert("La cantidad mínima permitida es 1.");
-      return;
-    }
-
-    const quantityChange = action === "add" ? 1 : -1;
-
-    // Enviar la solicitud al servidor
-    const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ quantity: quantityChange }),
-    });
-
-    if (response.ok) {
-      window.location.reload(); // Recargar la página para reflejar los cambios
-    } else {
-      const error = await response.json();
-      alert(`Error: ${error.message}`);
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    alert("Hubo un problema al actualizar la cantidad.");
-  }
-}
-
-    // Función para eliminar un producto del carrito
     async function deleteProduct(cartId, productId) {
       try {
         const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
@@ -166,7 +244,13 @@ async function updateQuantity(cartId, productId, action) {
           window.location.reload();
         } else {
           const error = await response.json();
-          alert(`Error: ${error.message}`);
+          Swal.fire({
+            title: 'Error',
+            text: `Error: ${error.message}`,
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#d32f2f'
+          });
         }
       } catch (error) {
         console.error("Error:", error);
@@ -174,7 +258,6 @@ async function updateQuantity(cartId, productId, action) {
       }
     }
 
-    // Función para realizar la compra
     async function checkout(cartId) {
       try {
         const response = await fetch(`/api/carts/${cartId}/checkout`, {
@@ -182,13 +265,32 @@ async function updateQuantity(cartId, productId, action) {
         });
 
         if (response.ok) {
-          alert("¡Compra realizada con éxito!");
+          await Swal.fire({
+            title: '¡Éxito!',
+            text: '¡Compra realizada con éxito!',
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#27ae60'
+          });
           window.location.href = "/";
         } else {
-          alert("Hubo un problema al realizar la compra.");
+          await Swal.fire({
+            title: 'Error',
+            text: 'Hubo un problema al realizar la compra.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#e74c3c'
+          });
         }
       } catch (error) {
         console.error("Error al realizar la compra:", error);
+        await Swal.fire({
+          title: 'Error',
+          text: 'Ocurrió un error inesperado al procesar la compra.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#e74c3c'
+        });
       }
     }
   </script>

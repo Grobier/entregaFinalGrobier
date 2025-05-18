@@ -1,120 +1,212 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lista de Carritos</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
-    /* Estilo específico para la página de carritos */
-    .cart-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-      padding: 20px;
+    :root {
+      --primary-color: #1a73e8;
+      --accent-color: #27ae60;
+      --background-color: #f8f9fa;
+      --text-color: #2c3e50;
+      --border-color: #e9ecef;
+      --shadow-color: rgba(0, 0, 0, 0.1);
     }
 
-    .cart-card {
-      background-color: #2c2c2c;
-      border: 1px solid #6c5ce7;
-      border-radius: 12px;
-      padding: 16px;
-      width: 300px;
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--background-color);
+      margin: 0;
+      padding: 0;
+    }
+
+    .banner {
+      background-image: url('/img/banner.png');
+      background-size: cover;
+      background-position: center;
+      color: white;
       text-align: center;
-      box-shadow: 0px 4px 8px rgba(108, 92, 231, 0.5);
-      transition: transform 0.2s ease-in-out;
+      padding: 2rem 1rem;
+      margin-bottom: 2rem;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 4px 6px var(--shadow-color);
+      max-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .cart-card:hover {
-      transform: translateY(-8px);
+    .banner h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: white;
     }
 
-    .cart-header {
-      font-size: 22px;
-      color: #dfe6e9;
-      margin-bottom: 10px;
+    .cart-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
     }
 
-    .cart-products {
+    .cart-table {
+      width: 100%;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px var(--shadow-color);
+      border-collapse: separate;
+      border-spacing: 0 0.5rem;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .cart-table thead {
+      background: linear-gradient(135deg, var(--primary-color), #0d47a1);
+      color: white;
+    }
+
+    .cart-table th {
+      padding: 1.5rem;
       text-align: left;
-      margin-top: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 0.9rem;
     }
 
-    .cart-products li {
-      border-bottom: 1px dashed #6c5ce7;
-      padding: 8px 0;
-      color: #e0e0e0;
+    .cart-table td {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
     }
 
-    .cart-products li:last-child {
+    .cart-table tbody tr {
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .cart-table tbody tr:hover {
+      background-color: rgba(26, 115, 232, 0.05);
+      transform: scale(1.005);
+    }
+
+    .cart-table tbody tr:last-child td {
       border-bottom: none;
     }
 
+    .product-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .product-info strong {
+      color: var(--primary-color);
+      font-size: 1.1rem;
+    }
+
+    .product-info div {
+      color: var(--text-color);
+      font-size: 0.95rem;
+    }
+
     .empty-cart {
-      color: #888;
+      color: var(--text-color);
       font-style: italic;
       text-align: center;
+      padding: 1rem;
+    }
+
+    .cart-actions {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .details-link, .delete-btn {
+      flex: 1;
+      padding: 0.85rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
     }
 
     .details-link {
-      display: inline-block;
-      margin-top: 10px;
-      background-color: #8e44ad;
+      background-color: var(--primary-color);
       color: white;
       text-decoration: none;
-      padding: 10px 15px;
-      border-radius: 8px;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
     }
 
     .details-link:hover {
-      background-color: #6c5ce7;
+      background-color: #0d47a1;
+      transform: translateY(-2px);
     }
 
     .delete-btn {
-      margin-top: 10px;
-      background-color: #e74c3c;
+      background-color: #dc3545;
       color: white;
-      padding: 10px 15px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
       border: none;
-      transition: background-color 0.3s ease;
     }
 
     .delete-btn:hover {
-      background-color: #c0392b;
+      background-color: #c82333;
+      transform: translateY(-2px);
     }
   </style>
 </head>
 <body>
-  <h1 style="text-align: center;">Lista de Carritos</h1>
+  <div class="banner">
+    <h1>Lista de Carritos</h1>
+  </div>
   <div class="cart-container">
     {{#if carts.length}}
-      {{#each carts}}
-        <div class="cart-card">
-          <h2 class="cart-header">Carrito ID: {{this._id}}</h2>
-          <ul class="cart-products">
-            {{#if this.products.length}}
-              {{#each this.products}}
-                <li>
-                  Producto: <strong>{{this.product.title}}</strong> <br>
-                  Cantidad: {{this.quantity}}
-                </li>
-              {{/each}}
-            {{else}}
-              <li class="empty-cart">Este carrito está vacío.</li>
-            {{/if}}
-          </ul>
-          <a href="/carts/{{this._id}}" class="details-link">Ver detalles del carrito</a>
-          <!-- Botón para eliminar el carrito -->
-          <button class="delete-btn" onclick="deleteCart('{{this._id}}')">Eliminar carrito</button>
-        </div>
-      {{/each}}
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>ID del Carrito</th>
+            <th>Productos</th>
+            <th>Total de Items</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each carts}}
+            <tr>
+              <td><span style="font-size: 0.9rem; color: #666;">#{{this._id}}</span></td>
+              <td>
+                <div class="product-info">
+                  {{#if this.products.length}}
+                    {{#each this.products}}
+                      <div>
+                        <strong>{{this.product.title}}</strong>
+                        <div>Cantidad: {{this.quantity}}</div>
+                      </div>
+                    {{/each}}
+                  {{else}}
+                    <div class="empty-cart">Este carrito está vacío</div>
+                  {{/if}}
+                </div>
+              </td>
+              <td>{{this.products.length}}</td>
+              <td>
+                <div class="cart-actions">
+                  <a href="/carts/{{this._id}}" class="details-link">Finalizar compra</a>
+                  <button class="delete-btn" onclick="deleteCart('{{this._id}}')">Eliminar</button>
+                </div>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
     {{else}}
-      <p class="empty-cart">No hay carritos disponibles.</p>
+      <div class="empty-cart">No hay carritos disponibles</div>
     {{/if}}
   </div>
 
@@ -127,14 +219,32 @@
         });
 
         if (response.ok) {
-          alert('Carrito eliminado con éxito');
+          Swal.fire({
+            title: '¡Éxito!',
+            text: 'Carrito eliminado con éxito',
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#1a73e8'
+          });
           window.location.reload(); // Recargar la página para reflejar los cambios
         } else {
-          alert('Hubo un problema al eliminar el carrito');
+          Swal.fire({
+            title: 'Error',
+            text: 'Hubo un problema al eliminar el carrito',
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#dc3545'
+          });
         }
       } catch (error) {
         console.error('Error al eliminar el carrito:', error);
-        alert('Error al eliminar el carrito');
+        Swal.fire({
+          title: 'Error',
+          text: 'Error al eliminar el carrito',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#dc3545'
+        });
       }
     }
   </script>

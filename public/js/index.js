@@ -41,18 +41,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (response.ok) {
-          alert("Producto agregado con éxito.");
+          Swal.fire({
+            title: '¡Éxito!',
+            text: 'Producto agregado con éxito',
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#2e7d32'
+          });
           formNewProduct.reset(); // Limpiar el formulario
           const newProduct = await response.json();
           socket.emit("productAdded", newProduct.payload);
         } else {
           const error = await response.json();
           console.error("Error en la respuesta del servidor:", error);
-          alert(`Error: ${error.message}`);
+          Swal.fire({
+            title: 'Error',
+            text: `Error: ${error.message}`,
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#d32f2f'
+          });
         }
       } catch (error) {
         console.error("Error al agregar el producto:", error);
-        alert("Hubo un problema al agregar el producto.");
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un problema al agregar el producto',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#d32f2f'
+        });
       }
     });
 
@@ -110,7 +128,13 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         } catch (error) {
           console.error("Error al validar el carrito:", error);
-          alert("Hubo un problema al validar el carrito.");
+          Swal.fire({
+            title: 'Error',
+            text: 'Hubo un problema al validar el carrito',
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#d32f2f'
+          });
           return;
         }
       }
@@ -125,7 +149,13 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = `/carts/${cartId}`;
       } catch (error) {
         console.error("Error al crear el carrito:", error);
-        alert("Hubo un problema al crear el carrito.");
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un problema al crear el carrito',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#d32f2f'
+        });
       }
     });
   }
@@ -162,7 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem("cartId", cartId);
         } catch (error) {
           console.error("Error al crear el carrito:", error);
-          alert("Hubo un problema al crear el carrito.");
+          Swal.fire({
+          title: 'Error',
+          text: 'Hubo un problema al crear el carrito',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#d32f2f'
+        });
           return;
         }
       }
@@ -176,16 +212,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (response.ok) {
-          alert("Producto agregado al carrito con éxito.");
+          Swal.fire({
+            title: '¡Éxito!',
+            text: 'Producto agregado al carrito con éxito',
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#2e7d32'
+          });
           updateCartCounter(); // Actualizar el contador después de agregar un producto
         } else {
           const errorData = await response.json();
           console.error("Error en la respuesta del servidor:", errorData);
-          alert(`Error: ${errorData.message}`);
+          Swal.fire({
+            title: 'Error',
+            text: `Error: ${errorData.message}`,
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#d32f2f'
+          });
         }
       } catch (error) {
         console.error("Error al agregar producto al carrito:", error);
-        alert("Hubo un problema al agregar el producto al carrito.");
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un problema al agregar el producto al carrito',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#d32f2f'
+        });
       }
     }
   });
@@ -195,7 +249,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (event.target.classList.contains("checkout-btn")) {
       const cartId = localStorage.getItem("cartId");
       if (!cartId) {
-        alert("No hay un carrito válido para procesar la compra.");
+        Swal.fire({
+          title: 'Error',
+          text: 'No hay un carrito válido para procesar la compra',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#d32f2f'
+        });
         return;
       }
 
@@ -205,17 +265,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (response.ok) {
-          alert("¡Compra realizada con éxito!");
-          localStorage.removeItem("cartId"); // Limpiar el carrito después de la compra
-          window.location.href = "/";
+          Swal.fire({
+            title: '¡Éxito!',
+            text: '¡Compra realizada con éxito!',
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#2e7d32'
+          }).then(() => {
+            localStorage.removeItem("cartId"); // Limpiar el carrito después de la compra
+            window.location.href = "/";
+          });
         } else {
           const errorData = await response.json();
           console.error("Error en la respuesta del servidor:", errorData);
-          alert(`Error: ${errorData.message}`);
+          Swal.fire({
+            title: 'Error',
+            text: `Error: ${errorData.message}`,
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#d32f2f'
+          });
         }
       } catch (error) {
         console.error("Error al realizar la compra:", error);
-        alert("Hubo un problema al realizar la compra.");
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un problema al realizar la compra',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#d32f2f'
+        });
       }
     }
   });
